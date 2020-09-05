@@ -107,7 +107,7 @@ class MinerEnv:
                     have_gold = self.state.mapInfo.gold_amount_y(spy_y, player_object, player_count)
 
                 if have_gold > 0:
-                    if spy_x != min_gold_ex[0] and spy_y != min_gold_ex[1]:
+                    if str(spy_x) + '_' + str(spy_y) not in min_gold_ex:
                         gold_near = [spy_x, spy_y]
                         break
 
@@ -172,7 +172,7 @@ class MinerEnv:
 
                 have_gold = self.check_gold_object(spy_x, spy_y, gold_object) > 0 and have_player
                 if have_gold:
-                    if spy_x != min_gold_ex[0] and spy_y != min_gold_ex[1]:
+                    if str(spy_x) + '_' + str(spy_y) not in min_gold_ex:
                         gold_near = [spy_x, spy_y]
                         break
 
@@ -249,7 +249,7 @@ class MinerEnv:
                                                                                                          posy,
                                                                                                          gold_nears[
                                                                                                              str(i)][1])
-                if distance > min_distance:
+                if distance > min_distance and str(gold_nears[str(i)][0]) + '_' + str(gold_nears[str(i)][1]) not in min_gold_ex:
                     min_gold = gold_nears[str(i)]
                     gold_amout = self.check_gold_object(gold_nears[str(i)][0], gold_nears[str(i)][1],
                                                         gold_object) / player_count
@@ -259,7 +259,7 @@ class MinerEnv:
                 else:
                     if distance == min_distance:
                         if self.check_gold_object(gold_nears[str(i)][0], gold_nears[str(i)][1],
-                                                  gold_object) / player_count > gold_amout:
+                                                  gold_object) / player_count > gold_amout and str(gold_nears[str(i)][0]) + '_' + str(gold_nears[str(i)][1]) not in min_gold_ex:
                             min_gold = gold_nears[str(i)]
                             gold_amout = self.check_gold_object(gold_nears[str(i)][0], gold_nears[str(i)][1],
                                                                 gold_object) / player_count
@@ -304,14 +304,14 @@ class MinerEnv:
                                                                                                                  pos[0],
                                                                                                                  posy,
                                                                                                                  pos[1])
-                        if distance > min_distance:
+                        if distance > min_distance and str(pos[0]) + '_' + str(pos[1]) not in min_gold_ex:
                             min_gold = pos
                             gold_amout = self.check_gold_object(pos[0], pos[1], gold_object) / player_count
                             min_distance = distance
                             gold_distance = self.distance_caculate(posx, pos[0], posy, pos[1])
                             index = i
                         else:
-                            if distance == min_distance:
+                            if distance == min_distance and str(pos[0]) + '_' + str(pos[1]) not in min_gold_ex:
                                 if self.check_gold_object(pos[0], pos[1], gold_object) / player_count > gold_amout:
                                     min_gold = pos
                                     gold_amout = self.check_gold_object(pos[0], pos[1], gold_object) / player_count
@@ -449,7 +449,7 @@ class MinerEnv:
             dead_object["3"] = True
 
         min_gold, index, gold_distance = self.get_position_gold(posx, posy, player_object_zero, center_gold,
-                                                                total_player, gold_object, [-1, -1])
+                                                                total_player, gold_object, ['-1_-1'])
 
         gold_only_left = index == 0
         gold_only_right = index == 1
@@ -464,7 +464,7 @@ class MinerEnv:
             "2"] or center_gold or gold_only_left or gold_only_right or gold_only_bottom
         finish_object["3"] = bottom_score_swamp or bottom_score_trap or bottom_tree or dead_object[
             "3"] or center_gold or gold_only_left or gold_only_right or gold_only_top
-        finish_object["4"] = self.state.energy >= 30
+        finish_object["4"] = self.state.energy >= 40
         finish_object["5"] = ground or no_ground
         finish_object["6"] = center_score_swamp or center_score_trap or center_tree
 
@@ -475,11 +475,20 @@ class MinerEnv:
             "3": bottom_score_swamp or bottom_score_trap or bottom_tree or dead_object["3"]
         }
 
+        total_gold = 0
+        min_gold_array = [str(min_gold[0]) + '_' + str(min_gold[1])]
+        for i in range(self.state.mapInfo.max_x + 1):
+            for j in range(self.state.mapInfo.max_y + 1):
+                if self.state.mapInfo.gold_amount(i, j) > 0:
+                    total_gold += 1
+
         while finish_object["0"] and finish_object["1"] and finish_object["2"] and finish_object["3"] and finish_object["4"] and finish_object["5"]:
             print('finish_object ', finish_object)
+            print('finish_object_no_gold ', finish_object_no_gold)
+            print('min_gold ', total_gold)
             if not finish_object_no_gold["0"] or not finish_object_no_gold["1"] or not finish_object_no_gold["2"] or not finish_object_no_gold["3"]:
                 min_gold, index, gold_distance = self.get_position_gold(posx, posy, player_object_zero, center_gold,
-                                                                        total_player, gold_object, min_gold)
+                                                                        total_player, gold_object, min_gold_array)
 
                 gold_only_left = index == 0
                 gold_only_right = index == 1
@@ -494,9 +503,11 @@ class MinerEnv:
                     "2"] or center_gold or gold_only_left or gold_only_right or gold_only_bottom
                 finish_object["3"] = bottom_score_swamp or bottom_score_trap or bottom_tree or dead_object[
                     "3"] or center_gold or gold_only_left or gold_only_right or gold_only_top
-                finish_object["4"] = self.state.energy >= 30
+                finish_object["4"] = self.state.energy >= 40
                 finish_object["5"] = ground or no_ground
                 finish_object["6"] = center_score_swamp or center_score_trap or center_tree
+
+                min_gold_array.append(str(min_gold[0]) + '_' + str(min_gold[1]))
             else:
                 break
 
