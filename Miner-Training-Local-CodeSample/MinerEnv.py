@@ -494,7 +494,7 @@ class MinerEnv:
                     "2"] or center_gold or gold_only_left or gold_only_right or gold_only_bottom
                 finish_object["3"] = bottom_score_swamp or bottom_score_trap or bottom_tree or dead_object[
                     "3"] or center_gold or gold_only_left or gold_only_right or gold_only_top
-                finish_object["4"] = self.state.energy >= 50
+                finish_object["4"] = self.state.energy >= 30
                 finish_object["5"] = ground or no_ground
                 finish_object["6"] = center_score_swamp or center_score_trap or center_tree
             else:
