@@ -25,7 +25,7 @@ with open(filename, 'w') as f:
 MEAN_STEP = 100
 MAX_STEP = 1000  # The number of steps for each episode
 BATCH_SIZE = 32  # The number of experiences for each replay
-N_EPISODE = 10000  # The number of episodes for training
+N_EPISODE = 20000  # The number of episodes for training
 SAVE_NETWORK = 100  # After this number of episodes, the DQN model is saved for testing later.
 MEMORY_SIZE = 100000  # The size of the batch for storing experiences
 INITIAL_REPLAY_SIZE = 1000  # The number of experiences are stored in the memory batch before starting replaying

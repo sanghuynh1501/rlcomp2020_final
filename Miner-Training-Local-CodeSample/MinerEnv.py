@@ -248,6 +248,11 @@ class MinerEnv:
                                                                                                              str(i)][0],
                                                                                                          posy,
                                                                                                          gold_nears[
+                                                                                                             str(i)][1]) + self.check_gold_around(gold_nears[str(i)][0], gold_nears[str(i)][1], gold_object, player_object) / self.distance_caculate(posx,
+                                                                                                         gold_nears[
+                                                                                                             str(i)][0],
+                                                                                                         posy,
+                                                                                                         gold_nears[
                                                                                                              str(i)][1])
                 if distance > min_distance and str(gold_nears[str(i)][0]) + '_' + str(gold_nears[str(i)][1]) not in min_gold_ex:
                     min_gold = gold_nears[str(i)]
@@ -303,6 +308,9 @@ class MinerEnv:
                                                            gold_object) / player_count) / self.distance_caculate(posx,
                                                                                                                  pos[0],
                                                                                                                  posy,
+                                                                                                                 pos[1]) + self.check_gold_around(pos[0], pos[1], gold_object, player_object) / self.distance_caculate(posx,
+                                                                                                                 pos[0],
+                                                                                                                 posy,
                                                                                                                  pos[1])
                         if distance > min_distance and str(pos[0]) + '_' + str(pos[1]) not in min_gold_ex:
                             min_gold = pos
@@ -338,6 +346,18 @@ class MinerEnv:
             return gold_object[str(x) + "_" + str(y)]
         else:
             return 0
+
+    def check_gold_around(self, posx, posy, gold_object, player_object):
+        total_gold = 0
+        state_top = [posx - 2, posy - 2]
+        for i in range(0, 5):
+            state_top[1] = posy - 2
+            for j in range(0, 5):
+                if str(state_top[0]) + "_" + str(state_top[1]) not in player_object:
+                    total_gold += self.check_gold_object(state_top[0], state_top[1], gold_object)
+                state_top[1] += 1
+            state_top[0] += 1
+        return total_gold * 0.5
 
     # Functions are customized by client
     def get_state(self):
